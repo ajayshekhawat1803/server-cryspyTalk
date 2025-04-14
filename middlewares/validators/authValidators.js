@@ -1,10 +1,10 @@
 import { body } from 'express-validator'
-import { emailNotExists } from './commonValidators.js';
+import { emailExists, emailNotExists } from './commonValidators.js';
 // Auth validators
 
 export const signupValidationRules = [
   body("firstName").trim().notEmpty().withMessage("First name cannot be empty"),
-  body("lastName").trim().notEmpty().withMessage("Last name cannot be empty"),
+  body("lastName").trim(),
   body("password").trim().notEmpty().withMessage("Password is required"),
   body("email")
     .trim()
@@ -21,4 +21,13 @@ export const signupValidationRules = [
       }
       return true;
     }),
+];
+
+export const loginValidationRules = [
+  body("password").trim().notEmpty().withMessage("Password is required"),
+  body("email")
+    .trim()
+    .notEmpty().withMessage("Email is required")
+    .isEmail().withMessage("Invalid email address")
+    .bail().custom(emailExists),
 ];

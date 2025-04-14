@@ -1,6 +1,6 @@
 import { validationResult } from "express-validator";
 
-const handleFormValidation = (req, res, message) => {
+const handleFormValidation = (req, message) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         const formattedErrors = {};

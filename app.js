@@ -2,8 +2,8 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import authRouter from './Routers/authRouter.js';
 import { corsConfig } from './config/corsConfig.js';
+import authRouter from './routers/authRouter.js';
 
 const port = process.env.PORT || 5000;
 const db = process.env.DB_URL || 'mongodb://localhost:27017/Real-time-Chat-App-default';
