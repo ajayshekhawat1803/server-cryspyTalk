@@ -39,7 +39,7 @@ class authCont {
                 return res.status(422).json(hasErrors);
             }
             const { email, password } = req.body;
-            const user = await userModel.findOne({ email });                        // Find user by email
+            const user = await userModel.findOne({ email }).select(["password", "firstName", "lastname", "_id", "email"]);                        // Find user by email
             const isPasswordValid = await bcrypt.compare(password, user.password);  // Compare passwords
             if (!isPasswordValid) {
                 return res.status(401).json({ message: "Login failed!", success: false, data: { password: 'Invalid credentials' } });
