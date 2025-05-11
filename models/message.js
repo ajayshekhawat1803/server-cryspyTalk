@@ -1,33 +1,25 @@
 import mongoose from "mongoose";
 
 const messageSchema = new mongoose.Schema({
-    sender: {
+    senderId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "users",
         required: true,
     },
-    chat: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "chats",
-        required: true,
-    },
+    chatId: { type: mongoose.Schema.Types.ObjectId, ref: 'chats', required: true },
     content: {
         type: String,
         required: true,
     },
-    readBy: [
-        {
-            user: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "users",
-            },
-            readAt: {
-                type: Date,
-            },
-        },
-    ],
+    mediaUrl: { type: String },
+    seenBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    sentAt: { type: Date, default: Date.now },
     isDeleted: {
         type: Boolean,
         default: false,
     },
+    editedAt: { type: Date },
 }, { timestamps: true });
+
+const messagesModel = mongoose.model('messages', messageSchema);
+export default messagesModel;
