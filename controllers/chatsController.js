@@ -1,4 +1,5 @@
 import chatModel from "../models/chat.js";
+import messagesModel from "../models/message.js";
 
 class chatsCont {
     constructor() {
@@ -7,7 +8,7 @@ class chatsCont {
     async getUserChats(req, res) {
         try {
             const userId = req.user.id;
-            const chats = await chatModel.find({ members: userId })
+            let chats = await chatModel.find({ members: userId })
                 .populate({
                     path: "members",
                     select: "_id firstName lastName profilePic username"
@@ -22,14 +23,23 @@ class chatsCont {
                 .sort({ updatedAt: -1 })
                 .lean();
             // Add chat name if only two members and is not a group chat
-            chats.forEach(chat => {
+            chats = chats.map(async (chat) => {
                 if (chat.members && chat.members.length === 2 && chat.isGroupChat === false) {
                     const otherMember = chat.members.find(m => m._id.toString() !== userId.toString());
                     if (otherMember) {
                         chat.name = `${otherMember.firstName} ${otherMember.lastName}`;
                     }
                 }
+                // Count unread messages for this user in this chat
+                chat.unreadMessageCount = await messagesModel.countDocuments({
+                    chatId: chat._id,
+                    senderId: { $ne: userId },
+                    seenBy: { $nin: [userId] },
+                    isDeleted: false,
+                });
+                return chat;
             });
+            chats = await Promise.all(chats);
             return res.status(200).json({ message: "Chats fetched successfully", success: true, data: chats });
         } catch (error) {
             console.log(error);
@@ -61,7 +71,7 @@ class chatsCont {
                 })
                 .sort({ updatedAt: -1 })
                 .lean();
-                console.log("chat", chat);                
+            console.log("chat", chat);
             if (!chat) {
                 return res.status(404).json({ message: "No chats found", success: false, data: null });
             }
@@ -78,7 +88,7 @@ class chatsCont {
         }
     }
 
-    
+
 }
 
 const chatsController = new chatsCont

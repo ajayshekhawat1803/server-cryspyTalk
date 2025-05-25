@@ -8,6 +8,7 @@ import authMiddleware from './middlewares/authMiddleware.js';
 import userRouter from './routers/userRouter.js';
 import friendshipRouter from './routers/friendshipRouter.js';
 import chatsRouter from './routers/chatsRouter.js';
+import msgRouter from './routers/messageRouter.js';
 dotenv.config();
 
 const port = process.env.PORT || 5000;
@@ -30,6 +31,7 @@ app.use('/auth', authRouter);
 app.use('/user', authMiddleware, userRouter);
 app.use('/friendship', authMiddleware, friendshipRouter);
 app.use('/chats', authMiddleware, chatsRouter);
+app.use('/messages', authMiddleware, msgRouter);
 
 
 

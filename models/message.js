@@ -12,7 +12,7 @@ const messageSchema = new mongoose.Schema({
         required: true,
     },
     mediaUrl: { type: String },
-    seenBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'users' }],
+    seenBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'users', default: [] }],
     sentAt: { type: Date, default: Date.now },
     isDeleted: {
         type: Boolean,
