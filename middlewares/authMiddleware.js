@@ -8,7 +8,7 @@ const authMiddleware = (req, res, next) => {
         }
         jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
             if (err) {
-                return res.status(401).json({ message: "Session expired or Invalid token passed", success: false, data: null });
+                return res.status(401).json({ message: "Session expired!! Login again ", success: false, data: null });
             }
             req.user = decoded;
             next();

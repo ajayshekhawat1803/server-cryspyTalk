@@ -14,14 +14,10 @@ class authCont {
             if (hasErrors) {
                 return res.status(422).json(hasErrors);
             }
-            const { firstName, lastName, email, password } = req.body;
-            const hashedPass = await bcrypt.hash(password, 10);             // encrypt the password
-            await userModel.create({                                        // create the user
-                firstName,
-                lastName,
-                email,
-                password: hashedPass,
-            });
+            let data = req.body;
+            const hashedPass = await bcrypt.hash(data.password, 10);
+            data.password = hashedPass             // encrypt the password
+            await userModel.create(data);
             return res
                 .status(201)
                 .json({ message: "Registeration successful", success: true, data: null });

@@ -146,7 +146,7 @@ class friendshipCont {
 
     async getPendingRequests(req, res) {
         try {
-            const requests = await friendshipModel.find({ receiverId: req.user.id, status: 'pending' }).populate('senderId', 'name email profilePic');
+            const requests = await friendshipModel.find({ receiverId: req.user.id, status: 'pending' }).populate('senderId', 'firstName lastName email profilePic username');
             return res.status(200).json({ message: "Pending requests fetched successfully", success: true, data: requests });
         } catch (error) {
             console.log(error);

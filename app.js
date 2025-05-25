@@ -7,6 +7,7 @@ import authRouter from './routers/authRouter.js';
 import authMiddleware from './middlewares/authMiddleware.js';
 import userRouter from './routers/userRouter.js';
 import friendshipRouter from './routers/friendshipRouter.js';
+import chatsRouter from './routers/chatsRouter.js';
 dotenv.config();
 
 const port = process.env.PORT || 5000;
@@ -20,6 +21,7 @@ mongoose.connect(db, {
     })
 const app = express();
 app.use(cors(corsConfig));
+app.use('/public', express.static('public'));
 app.use(express.json());
 
 
@@ -27,6 +29,7 @@ app.use(express.json());
 app.use('/auth', authRouter);
 app.use('/user', authMiddleware, userRouter);
 app.use('/friendship', authMiddleware, friendshipRouter);
+app.use('/chats', authMiddleware, chatsRouter);
 
 
 
