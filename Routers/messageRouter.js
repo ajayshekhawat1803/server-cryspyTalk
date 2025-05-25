@@ -5,5 +5,6 @@ import { sendNewMsgValidationRules } from "../middlewares/validators/messageVali
 const msgRouter = express.Router();
 
 msgRouter.post("/send-message", sendNewMsgValidationRules, messageController.sendNewMessage);
+msgRouter.get("/get-messages/:chatId", messageController.getMessagesByChatId);
 
 export default msgRouter;
