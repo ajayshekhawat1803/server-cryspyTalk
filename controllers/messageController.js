@@ -7,14 +7,15 @@ class messageCont {
     }
 
     async sendNewMessage(req, res) {
-        try {
+        try {            
             const hasErrors = handleFormValidation(req, "Message not sent");
             if (hasErrors) {
                 return res.status(422).json(hasErrors);
             }
             let data = req.body;
             data.senderId = req.user.id;
-            // add media url later
+            data.mediaUrl = req.file ? `uploads/messages/${req.file.filename}` : null;
+
             const isChatMember = await chatModel.findOne({
                 _id: data.chatId,
                 members: data.senderId
@@ -38,6 +39,7 @@ class messageCont {
                 path: "senderId",
                 select: "_id firstName lastName profilePic username"
             });
+console.log(res);
 
             return res.status(201).json({ message: "Message sent successfully", success: true, data: newMessage });
         } catch (error) {
@@ -58,8 +60,8 @@ class messageCont {
             if (!isChatMember) {
                 return res.status(403).json({ message: "You are not a member of this chat", success: false, data: null });
             }
-
-            const messages = await messagesModel.find({ chatId })
+            await messagesModel.updateMany({ chatId, seenBy: { $ne: userId } }, { $addToSet: { seenBy: userId } });
+            let messages = await messagesModel.find({ chatId })
                 .populate({
                     path: "senderId",
                     select: "_id firstName lastName profilePic username"
@@ -83,7 +85,10 @@ class messageCont {
                     chat['username'] = otherMember.username;
                 }
             }
-
+            messages = messages.map((msg) => {
+                msg.seenBy = msg.seenBy.filter((user) => user._id.toString() !== userId && user._id.toString() !== msg.senderId._id.toString());
+                return msg
+            })
             return res.status(200).json({ message: "Messages fetched successfully", success: true, data: { messages, chatUser: chat } });
         } catch (error) {
             console.log(error);

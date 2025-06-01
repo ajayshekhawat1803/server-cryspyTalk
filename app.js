@@ -23,6 +23,7 @@ mongoose.connect(db, {
 const app = express();
 app.use(cors(corsConfig));
 app.use('/public', express.static('public'));
+app.use('/uploads', express.static('uploads'));
 app.use(express.json());
 
 
@@ -32,6 +33,22 @@ app.use('/user', authMiddleware, userRouter);
 app.use('/friendship', authMiddleware, friendshipRouter);
 app.use('/chats', authMiddleware, chatsRouter);
 app.use('/messages', authMiddleware, msgRouter);
+
+app.get('/uploads/:folder/:filename', authMiddleware, (req, res) => {
+    const { folder, filename } = req.params;
+
+    // Sanitize folder and filename
+    const safeFolder = folder.replace(/[^a-zA-Z0-9_-]/g, '');
+    const safeFilename = filename.replace(/[^a-zA-Z0-9._-]/g, '');
+
+    const filePath = path.join('uploads', safeFolder, safeFilename);
+
+    if (!fs.existsSync(filePath)) {
+        return res.status(404).json({ success: false, message: 'File not found' });
+    }
+
+    res.sendFile(path.resolve(filePath));
+});
 
 
 
