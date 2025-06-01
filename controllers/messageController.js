@@ -69,16 +69,18 @@ class messageCont {
                     select: "_id firstName profilePic"
                 })
                 .sort({ sentAt: 1 });
-            const chat = await chatModel.findById(chatId)
+            let chat = await chatModel.findById(chatId)
                 .populate({
                     path: "members",
                     select: "_id firstName lastName profilePic username"
                 })
-
+            chat = chat.toObject();
             if (chat.members && chat.members.length === 2 && chat.isGroupChat === false) {
                 const otherMember = chat.members.find(m => m._id.toString() !== userId.toString());
                 if (otherMember) {
                     chat.name = `${otherMember.firstName} ${otherMember.lastName}`;
+                    chat['profilePic'] = otherMember.profilePic;
+                    chat['username'] = otherMember.username;
                 }
             }
 
