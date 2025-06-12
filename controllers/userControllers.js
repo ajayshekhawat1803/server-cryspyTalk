@@ -170,6 +170,29 @@ class userCont {
         }
     };
 
+    async updateProfilePic(req, res) {
+        try {
+
+            const mediaUrl = req.file ? `uploads/profile-pics/${req.file.filename}` : null;
+            const userId = req.user.id;
+            const hasErrors = handleFormValidation(req, "Operation failed!");       // Check for validation errors
+            if (hasErrors) {
+                return res.status(422).json(hasErrors);
+            }
+
+            const user = await userModel.findOne({ _id: userId });
+            await userModel.findByIdAndUpdate(
+                userId,
+                { profilePic: mediaUrl },
+                { new: true }
+            );
+            return res.status(200).json({ message: "ProfilePic updated successfully", success: true, data: { profilePic: mediaUrl } });
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({ message: "Something went wrong", success: false, data: null });
+        }
+    };
+
 }
 
 const userController = new userCont();
