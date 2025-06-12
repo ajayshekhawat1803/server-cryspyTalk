@@ -9,7 +9,7 @@ export const signupValidationRules = [
   body("password").trim().notEmpty().withMessage("Password is required"),
   body("gender").trim()
     .notEmpty().withMessage("Please specify your gender"),
-    // .isIn(genderOptions).withMessage(`Gender must be one of the following: ${Object.values(genderOptions).join(', ')}`),
+  // .isIn(genderOptions).withMessage(`Gender must be one of the following: ${Object.values(genderOptions).join(', ')}`),
   body("email")
     .trim()
     .toLowerCase()
@@ -35,4 +35,31 @@ export const loginValidationRules = [
     .notEmpty().withMessage("Email is required")
     .isEmail().withMessage("Invalid email address")
     .bail().custom(emailExists),
+];
+
+export const updateProfileValidationRules = [
+  body("firstName")
+    .trim()
+    .notEmpty()
+    .withMessage("First name cannot be empty"),
+
+  body("lastName")
+    .trim()
+    .optional({ nullable: true }),
+
+  body("username")
+    .trim()
+    .notEmpty()
+    .withMessage("Username is required")
+    .isLength({ min: 5, max: 20 })
+    .withMessage("Username must be between 5 and 20 characters")
+    .matches(/^[a-zA-Z0-9_.]+$/)
+    .withMessage("Username can only contain letters, numbers, underscores, and periods"),
+
+  body("dateOfBirth")
+    .customSanitizer(value => value === "" ? null : value)
+    .optional({ nullable: true })
+    .isISO8601()
+    .toDate()
+    .withMessage("Date of Birth must be a valid date")
 ];
