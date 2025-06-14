@@ -3,6 +3,8 @@ import friendshipModel from "../models/friendship.js";
 import userModel from "../models/user.js";
 import _ from "lodash";
 import bcrypt from "bcrypt";
+import fs from "fs";
+import path from "path";
 
 class userCont {
     constructor() { }
@@ -179,8 +181,14 @@ class userCont {
             if (hasErrors) {
                 return res.status(422).json(hasErrors);
             }
-
             const user = await userModel.findOne({ _id: userId });
+            if (user.profilePic) {
+                const oldPhotoPath = path.resolve('', user.profilePic);
+                console.log("Old photo path:", oldPhotoPath);
+                if (fs.existsSync(oldPhotoPath)) {
+                    fs.unlinkSync(oldPhotoPath);
+                }
+            }
             await userModel.findByIdAndUpdate(
                 userId,
                 { profilePic: mediaUrl },
