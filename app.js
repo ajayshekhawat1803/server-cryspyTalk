@@ -9,6 +9,10 @@ import userRouter from './routers/userRouter.js';
 import friendshipRouter from './routers/friendshipRouter.js';
 import chatsRouter from './routers/chatsRouter.js';
 import msgRouter from './routers/messageRouter.js';
+import { Server } from 'socket.io';
+import { createServer } from 'http';
+import { setIO } from './socket/socketService.js';
+import initSocket from './socket/index.js';
 dotenv.config();
 
 const port = process.env.PORT || 5000;
@@ -21,6 +25,15 @@ mongoose.connect(db, {
         console.log('Database connected successfully!');
     })
 const app = express();
+const server = createServer(app);
+
+// Socket.io setup
+const io = new Server(server, {
+    cors: corsConfig,
+});
+setIO(io);
+initSocket(io);
+
 app.use(cors(corsConfig));
 app.use('/public', express.static('public'));
 app.use('/uploads', express.static('uploads'));
@@ -57,7 +70,11 @@ app.get('/', (req, res) => {
     res.send('Server is running!');
 });
 
-// Starting the server
-app.listen(port, () => {
+// // Starting the server
+// app.listen(port, () => {
+//     console.log(`Server is listening request on port ${port}`);
+// });
+
+server.listen(port, () => {
     console.log(`Server is listening request on port ${port}`);
 });
