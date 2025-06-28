@@ -73,6 +73,16 @@ app.get('/health', (req, res) => {
     res.send(`Server is running perfectly on port ${port}!`);
 });
 
+// Global error handler
+app.use((err, req, res, next) => {
+    console.error('🔥 Error:', err || err);
+
+    res.status(err.status || 500).json({
+        success: false,
+        message: err.message || 'Internal Server Error',
+    });
+});
+
 server.listen(port, () => {
     console.log(`Server is listening request on port ${port}`);
 });
