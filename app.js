@@ -70,11 +70,6 @@ app.get('/', (req, res) => {
     res.send('Server is running!');
 });
 
-// // Starting the server
-// app.listen(port, () => {
-//     console.log(`Server is listening request on port ${port}`);
-// });
-
 server.listen(port, () => {
     console.log(`Server is listening request on port ${port}`);
 });
