@@ -69,6 +69,9 @@ app.get('/uploads/:folder/:filename', authMiddleware, (req, res) => {
 app.get('/', (req, res) => {
     res.send('Server is running!');
 });
+app.get('/health', (req, res) => {
+    res.send(`Server is running perfectly on port ${port}!`);
+});
 
 server.listen(port, () => {
     console.log(`Server is listening request on port ${port}`);
