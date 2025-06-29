@@ -2,6 +2,8 @@ import handleFormValidation from "../config/formDataValidationHandler.js";
 import chatModel from "../models/chat.js";
 import friendshipModel, { friendshipStatusEnums } from "../models/friendship.js";
 import userModel from "../models/user.js";
+import { SOCKET_EVENTS } from "../socket/socketEvents.js";
+import { getIO } from "../socket/socketService.js";
 
 class friendshipCont {
     constructor() {
@@ -9,6 +11,7 @@ class friendshipCont {
 
     async sendRequest(req, res) {
         try {
+            const io = getIO();
             const receiverId = req.params?.receiverId;
             if (!receiverId) {
                 return res.status(422).json({ message: "Receiver ID is required", success: false, data: null });
@@ -23,6 +26,11 @@ class friendshipCont {
                     senderId: req.user.id,
                     receiverId: receiverId,
                 })
+                // emit socket event
+                io.to(receiverId).emit(SOCKET_EVENTS.FRIEND.REQUEST_RECEIVED, {
+                    senderId: req.user.id,
+                    receiverId,
+                });
                 return res
                     .status(200)
                     .json({ message: "Request sent successfully", success: true, data: null });
@@ -32,6 +40,11 @@ class friendshipCont {
                 if (request.status === friendshipStatusEnums.PENDING) return res.status(400).json({ message: "Request already sent", success: false, data: null });
                 if (request.status === friendshipStatusEnums.REJECTED || request.status === friendshipStatusEnums.REVOKED) {
                     await friendshipModel.updateOne({ senderId: req.user.id, receiverId: receiverId }, { status: friendshipStatusEnums.PENDING });
+                    // emit socket event
+                    io.to(receiverId).emit(SOCKET_EVENTS.FRIEND.REQUEST_RECEIVED, {
+                        senderId: req.user.id,
+                        receiverId,
+                    });                    
                     return res.status(200).json({ message: "Request sent successfully", success: true, data: null });
                 }
                 if (request.status === friendshipStatusEnums.BLOCKED) {

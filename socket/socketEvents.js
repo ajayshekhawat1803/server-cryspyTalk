@@ -39,9 +39,6 @@ export const SOCKET_EVENTS = {
   USER: {
     CONNECTED: 'user:connected',                // User connected
     DISCONNECTED: 'user:disconnected',          // User disconnected
-    ONLINE_LIST: 'user:online_list',            // List of online users
-    USER_BLOCKED: 'user:blocked',               // User got blocked
-    USER_UNBLOCKED: 'user:unblocked',           // User got unblocked
     PROFILE_UPDATED: 'user:profile_updated',    // User updated profile
   },
 

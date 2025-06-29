@@ -11,18 +11,13 @@ export default function initSocket(io) {
         handleChatSocket(io, socket);
         handleMessageSocket(io, socket);
 
-        // user logged in   
-        socket.on(SOCKET_EVENTS.USER.CONNECTED, (userId) => {
-            console.log(`User ${userId} connected with socket ID: ${socket.id}`);
-        })
-
         // Join chat room
-        socket.on(SOCKET_EVENTS.JOIN_CHAT, (chatId) => {
-            socket.join(chatId);
-            console.log(`Socket ${socket.id} joined room ${chatId}`);
-        });
+        // socket.on(SOCKET_EVENTS.JOIN_CHAT, (chatId) => {
+        //     socket.join(chatId);
+        //     console.log(`Socket ${socket.id} joined room ${chatId}`);
+        // });
 
-        socket.on('disconnect', () => {
+        socket.on(SOCKET_EVENTS.USER.DISCONNECTED, () => {
             console.log('Socket disconnected:', socket.id);
         });
     });
