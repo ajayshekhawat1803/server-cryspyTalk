@@ -184,9 +184,10 @@ class userCont {
             const user = await userModel.findOne({ _id: userId });
             if (user.profilePic) {
                 const oldPhotoPath = path.resolve('', user.profilePic);
-                console.log("Old photo path:", oldPhotoPath);
-                if (fs.existsSync(oldPhotoPath)) {
-                    fs.unlinkSync(oldPhotoPath);
+                if (!user.profilePic.startsWith('public/')) {       // Skips deletion  if using default pictures
+                    if (fs.existsSync(oldPhotoPath)) {
+                        fs.unlinkSync(oldPhotoPath);
+                    }
                 }
             }
             await userModel.findByIdAndUpdate(
